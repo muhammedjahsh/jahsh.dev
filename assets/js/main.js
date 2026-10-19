@@ -1,5 +1,5 @@
 (()=>{
-const {GH,jobs,edu,projects,skills,svc,certs,soc}=window.D;
+const {GH,jobs,edu,projects,skills,svc,certs,soc,projectDetails}=window.D;
 const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
 const reduce=matchMedia('(prefers-reduced-motion:reduce)').matches,fine=matchMedia('(hover:hover) and (pointer:fine)').matches;
 const h=(t,c,x)=>{const e=document.createElement(t);if(c)e.className=c;if(x!=null)e.innerHTML=x;return e};
@@ -30,23 +30,24 @@ $('#certs').append(...certs.map(c=>h('div','row',`<b>${c[1]}</b><span>${c[0]}${c
 
 /* projects */
 const grid=$('#pgrid'),m=$('#modal');
-projects.forEach((p,i)=>{const src=`assets/video/${slug(p[1])}.mp4`;
- const b=h('button','pc rv',`<div class="pv"><video muted loop playsinline preload="none" data-src="${src}" aria-hidden="true"></video><span class="n mono">${pad(i+1)}</span></div><div class="pb"><span class="mono">${p[0]}</span><h3>${p[1]}</h3><p>${p[2]}</p><span class="more">Open project <i>→</i></span></div>`);
+projects.forEach((p,i)=>{const src=p.length>4?p[4]:`assets/video/${slug(p[1])}.mp4`,poster=p.length>6?p[6]:'';
+ const preview=src?`<video muted loop playsinline preload="none"${poster?` poster="${poster}"`:''} data-src="${src}" aria-hidden="true"></video>`:'';
+ const b=h('button','pc rv',`<div class="pv">${preview}<span class="n mono">${pad(i+1)}</span></div><div class="pb"><span class="mono">${p[0]}</span><h3>${p[1]}</h3><p>${p[2]}</p><span class="more">Open project <i>→</i></span></div>`);
  b.dataset.cat=p[0];b.style.setProperty('--i',i%3);b.onclick=()=>openProject(p);
  if(fine&&!reduce){b.onpointermove=e=>{const r=b.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;b.style.setProperty('--ry',x*8+'deg');b.style.setProperty('--rx',-y*8+'deg')};
-  b.onpointerenter=()=>{const v=$('video',b);if(!v.src)v.src=v.dataset.src;v.play().catch(()=>{})};
-  b.onpointerleave=()=>{b.style.setProperty('--ry','0deg');b.style.setProperty('--rx','0deg');$('video',b).pause()}}
+  b.onpointerenter=()=>{const v=$('video',b);if(v&&!v.src){v.src=v.dataset.src;v.play().catch(()=>{})}};
+  b.onpointerleave=()=>{b.style.setProperty('--ry','0deg');b.style.setProperty('--rx','0deg');$('video',b)?.pause()}}
  grid.append(b)});
 /* lazy poster frames */
 const vo=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){const v=e.target;if(!v.src){v.preload='metadata';v.src=v.dataset.src+'#t=1'}vo.unobserve(v)}}),{rootMargin:'200px'});
 $$('.pv video').forEach(v=>vo.observe(v));
 const cats=['All',...new Set(projects.map(p=>p[0]))],fl=$('#filters');
 cats.forEach((c,i)=>{const b=h('button','',c);b.setAttribute('aria-pressed',i===0);b.onclick=()=>{$$('button',fl).forEach(x=>x.setAttribute('aria-pressed',x===b));$$('.pc').forEach(p=>{p.hidden=c!=='All'&&p.dataset.cat!==c;if(!p.hidden)p.classList.add('in')})};fl.append(b)});
-function openProject(p){$('#mbody').innerHTML=`<span class="mono" style="color:var(--ac)">${p[0]}</span><h3 id="mt">${p[1]}</h3><video controls playsinline preload="metadata" aria-label="${p[1]} explainer"><source src="assets/video/${slug(p[1])}.mp4" type="video/mp4"></video><h4>Overview</h4><p>${p[2]}</p><h4>Tools &amp; technologies</h4><div class="chips">${p[3].map(t=>`<span class="chip">${t}</span>`).join('')}</div><div class="cta"><a class="btn solid" href="${GH}" target="_blank" rel="noopener">GitHub profile <span>↗</span></a></div>`;m.showModal()}
+function openProject(p){const src=p.length>4?p[4]:`assets/video/${slug(p[1])}.mp4`,poster=p.length>6?p[6]:'',overview=D.projectDetails[p[1]]||[p[2]];$('#mbody').innerHTML=`<span class="mono" style="color:var(--ac)">${p[0]}</span><h3 id="mt">${p[1]}</h3>${src?`<video controls playsinline preload="metadata"${poster?` poster="${poster}"`:''} aria-label="${p[1]} explainer"><source src="${src}" type="video/mp4"></video>`:''}<h4>Overview</h4>${overview.map(paragraph=>`<p>${paragraph}</p>`).join('')}<h4>${p[5]||'Tools &amp; technologies'}</h4><div class="chips">${p[3].map(t=>`<span class="chip">${t}</span>`).join('')}</div><div class="cta"><a class="btn solid" href="${GH}" target="_blank" rel="noopener">GitHub profile <span>↗</span></a></div>`;m.showModal()}
 m.addEventListener('close',()=>$('video',m)?.pause());$('#mx').onclick=()=>m.close();m.addEventListener('click',e=>{if(e.target===m)m.close()});
 
 /* AI capability map — matches real project/role content only */
-const caps=[['Machine Learning',/machine learning|scikit|random forest|classification|deep learning/i],['Generative AI',/generative|llm|gpt|langchain|rag\b|autogen|crewai/i],['LLMs',/llm|gpt|indicbert|llama|hugging/i],['RAG',/\brag\b|faiss|vector/i],['Agentic AI',/agent|crewai|langgraph|autogen/i],['NLP',/nlp|chatbot|dialogflow|rasa|whisper|speech/i],['Computer Vision',/computer vision|opencv|yolo|ocr|object detection|face|mediapipe|image/i],['AI Automation',/automation|n8n|workflow|bot\b/i],['AI APIs',/openai|gpt|whatsapp|telegram|twilio|rest api|\bapi/i],['Cloud Deployment',/\baws\b|ec2|render|deploy|docker|azure/i]];
+const caps=[['Machine Learning',/machine learning|scikit|random forest|classification|deep learning/i],['Generative AI',/generative|llm|gpt|langchain|rag\b|autogen|crewai/i],['LLMs',/llm|gpt|indicbert|llama|hugging/i],['RAG',/\brag\b|faiss|vector/i],['Document Intelligence',/document intelligence|document upload|source-grounded|pdf documents|word documents/i],['Agentic AI',/agent|crewai|langgraph|autogen/i],['NLP',/nlp|chatbot|dialogflow|rasa|whisper|speech/i],['Computer Vision',/computer vision|opencv|yolo|ocr|object detection|face|mediapipe|image/i],['AI Automation',/automation|n8n|workflow|bot\b/i],['AI APIs',/openai|gpt|whatsapp|telegram|twilio|rest api|\bapi/i],['Cloud Deployment',/\baws\b|ec2|render|deploy|docker|azure/i]];
 const svg=$('#mapsvg'),NS='http://www.w3.org/2000/svg',info=$('#mapinfo');
 const mk=(t,a,p=svg)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);p.append(e);return e};
 mk('circle',{class:'ring',cx:300,cy:300,r:235});mk('circle',{class:'ring',cx:300,cy:300,r:150});
