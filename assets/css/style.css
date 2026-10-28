@@ -33,7 +33,7 @@ h1{font-size:clamp(2.3rem,6vw,6.2rem);font-weight:800;letter-spacing:-.055em;lin
 .btn{display:inline-flex;gap:10px;align-items:center;padding:15px 26px;border:1px solid var(--line);border-radius:99px;font-weight:600;font-size:15px;transition:background .3s,color .3s,border-color .3s,transform .25s var(--ease);will-change:transform}
 .btn:hover{border-color:var(--fg)}.btn.solid{background:var(--ac);border-color:var(--ac);color:#0c0e0d}.btn.solid:hover{background:var(--fg);border-color:var(--fg)}
 .portrait-wrap{display:flex;flex-direction:column;align-items:center;gap:16px}.portrait{position:relative;aspect-ratio:3/4;overflow:hidden;border-radius:var(--r);clip-path:inset(100% 0 0 0);transition:clip-path 1.3s var(--ease) .4s;border:1px solid var(--line);width:min(100%,420px)}body.ready .portrait{clip-path:inset(0)}
-.portrait img{width:100%;height:112%;object-fit:cover;object-position:top;transform:translateY(var(--py,0));filter:grayscale(.35) contrast(1.05)}
+.portrait img{width:100%;height:100%;object-fit:cover;object-position:center;transform:translateY(var(--py,0)) scale(1.28);transform-origin:50% 32%;filter:grayscale(.15) contrast(1.04)}
 .portrait figcaption{position:absolute;left:10px;right:10px;bottom:10px;display:flex;flex-wrap:wrap;gap:6px}.portrait figcaption span{padding:5px 10px;border-radius:99px;background:var(--glass);backdrop-filter:blur(10px);border:1px solid var(--line)}
 .portrait-meta{text-align:center}.portrait-name{font-size:clamp(1.5rem,2vw,2.25rem);font-weight:600;letter-spacing:0;line-height:1.2;font-family:var(--d);}.portrait-role{margin-top:6px;color:var(--mut);font-size:11px;letter-spacing:.08em}.cue{position:absolute;left:50%;bottom:22px;transform:translateX(-50%);color:var(--mut)}.cue::after{content:"";display:block;width:1px;height:30px;margin:8px auto 0;background:var(--ac);animation:cu 2s infinite}@keyframes cu{50%{transform:scaleY(.3)}}
 .rv{opacity:0;transform:translateY(32px);transition:opacity .9s var(--ease),transform .9s var(--ease);transition-delay:calc(var(--i,0)*70ms)}.rv.in{opacity:1;transform:none}
@@ -77,8 +77,15 @@ dialog{border:1px solid var(--line);border-radius:var(--r);background:var(--bg);
 #career-chat{position:fixed;right:24px;bottom:24px;z-index:140;width:max-content;max-width:calc(100vw - 28px);margin:0;padding:0;font-family:var(--d)}
 #resume-float{position:fixed;left:24px;bottom:24px;z-index:140;display:flex;align-items:center;gap:9px;padding:13px 18px;border:1px solid var(--line);border-radius:99px;background:var(--bg2);box-shadow:0 12px 38px rgba(0,0,0,.22);color:var(--fg);font:600 13px var(--d);text-decoration:none;transition:border-color .25s,transform .25s var(--ease)}
 #resume-float:hover{border-color:var(--ac);transform:translateY(-2px)}#resume-float span{color:var(--ac)}
-.chat-toggle{display:flex;align-items:center;gap:10px;padding:13px 18px;border:1px solid var(--line);border-radius:99px;background:var(--bg2);box-shadow:0 12px 38px rgba(0,0,0,.22);font-size:13px;font-weight:600;transition:border-color .25s,transform .25s var(--ease)}
-.chat-toggle:hover{border-color:var(--ac);transform:translateY(-2px)}.chat-toggle-icon{display:grid;place-items:center;width:23px;height:23px;border-radius:50%;background:var(--ac);color:#0c0e0d;font:800 14px var(--d)}
+.chat-toggle{display:grid;place-items:center;width:62px;height:62px;padding:0;border:1px solid color-mix(in srgb,var(--ac) 55%,var(--line));border-radius:50%;background:var(--bg2);box-shadow:0 12px 38px rgba(0,0,0,.22);transition:border-color .25s,transform .25s var(--ease),box-shadow .25s}
+.chat-toggle:hover{border-color:var(--ac);transform:translateY(-3px);box-shadow:0 15px 40px color-mix(in srgb,var(--ac) 18%,transparent)}.chat-robot{width:44px;height:44px;overflow:visible;animation:robotFloat 2.8s ease-in-out infinite}
+.chat-robot path,.chat-robot rect{vector-effect:non-scaling-stroke}.robot-antenna,.robot-ear,.robot-brow,.robot-mouth{fill:none;stroke:var(--fg);stroke-linecap:round;stroke-linejoin:round;stroke-width:2.5}
+.robot-signal{fill:var(--ac);transform-origin:32px 4px;animation:robotSignal 1.8s ease-in-out infinite}
+.robot-head{fill:var(--bg2);stroke:var(--ac);stroke-width:2.5}
+.robot-eyes{fill:var(--ac);transform-origin:32px 33px;animation:robotBlink 4s ease-in-out infinite}
+@keyframes robotFloat{50%{transform:translateY(-3px) rotate(-2deg)}}
+@keyframes robotSignal{50%{opacity:.35;transform:scale(.7)}}
+@keyframes robotBlink{0%,44%,48%,100%{transform:scaleY(1)}46%{transform:scaleY(.12)}}
 .chat-panel{position:absolute;right:0;bottom:68px;width:min(380px,calc(100vw - 32px));height:min(540px,calc(100dvh - 120px));min-height:360px;display:flex;flex-direction:column;overflow:hidden;border:1px solid var(--line);border-radius:12px;background:var(--bg2);box-shadow:0 20px 70px rgba(0,0,0,.34);animation:chatIn .28s var(--ease)}
 .chat-panel[hidden]{display:none}@keyframes chatIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 .chat-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:17px 18px;border-bottom:1px solid var(--line);background:var(--glass)}
@@ -96,8 +103,8 @@ dialog{border:1px solid var(--line);border-radius:var(--r);background:var(--bg);
 .chat-form button{display:grid;place-items:center;flex:0 0 32px;height:32px;border-radius:6px;background:var(--ac);color:#0c0e0d;font-size:19px;font-weight:700}
 .chat-contact{align-self:center;padding:11px 10px 13px;color:var(--mut);font:10px var(--m);letter-spacing:.04em;text-transform:uppercase;transition:color .2s}.chat-contact:hover{color:var(--ac)}
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
-@media(max-width:640px){#career-chat{right:14px;bottom:14px}#resume-float{left:14px;bottom:14px;padding:11px 14px;font-size:12px}.chat-panel{bottom:62px;width:min(380px,calc(100vw - 28px));height:min(540px,calc(100dvh - 96px));min-height:300px}.chat-toggle{padding:11px 14px;font-size:12px}}
-@media(prefers-reduced-motion:reduce){.chat-panel{animation:none}}
+@media(max-width:640px){#career-chat{right:14px;bottom:14px}#resume-float{left:14px;bottom:14px;padding:11px 14px;font-size:12px}.chat-panel{bottom:76px;width:min(380px,calc(100vw - 28px));height:min(540px,calc(100dvh - 110px));min-height:300px}}
+@media(prefers-reduced-motion:reduce){.chat-panel{animation:none}.chat-robot,.robot-signal,.robot-eyes{animation:none}}
 .resume{display:flex;justify-content:space-between;align-items:center;gap:30px;flex-wrap:wrap;padding:clamp(28px,5vw,64px);border:1px solid var(--line);border-radius:var(--r);background:linear-gradient(120deg,color-mix(in srgb,var(--ac) 10%,transparent),transparent 60%)}.resume h2{margin-bottom:14px}
 h2.big{font-size:clamp(3rem,10vw,9rem);max-width:none;letter-spacing:-.05em;font-weight:800;line-height:.92}
 .crow{display:flex;justify-content:space-between;align-items:flex-end;gap:30px;flex-wrap:wrap;margin-top:48px;padding-top:30px;border-top:1px solid var(--line)}
@@ -115,6 +122,6 @@ footer{border-top:1px solid var(--line);padding:26px 0;color:var(--mut)}footer .
   #nav{padding-left:16px;justify-content:space-between;align-items:center;gap:8px}
   .logo{margin-right:0}
 }
-@media(max-width:640px){.hero{grid-template-columns:1fr}.portrait{order:-1;aspect-ratio:4/3;max-height:260px}.portrait img{object-position:50% 58%}.pgrid,.skgrid{grid-template-columns:1fr}.stats{grid-template-columns:1fr}.stat{border-left:0;border-top:1px solid var(--line);padding-left:0}.stat:first-child{border:0}.cue{display:none}.btn{flex:1;justify-content:center}.sk{min-height:0}#tpanel{padding:22px}.mono{font-size:11px}}
+@media(max-width:640px){.hero{grid-template-columns:1fr}.portrait{order:-1;aspect-ratio:3/4;width:min(100%,320px);max-height:none}.pgrid,.skgrid{grid-template-columns:1fr}.stats{grid-template-columns:1fr}.stat{border-left:0;border-top:1px solid var(--line);padding-left:0}.stat:first-child{border:0}.cue{display:none}.btn{flex:1;justify-content:center}.sk{min-height:0}#tpanel{padding:22px}.mono{font-size:11px}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition-duration:.01ms!important}.rv,.ln>span,.portrait{opacity:1;transform:none;clip-path:none}html{scroll-behavior:auto}}
 @media(hover:none){#cur{display:none}}
